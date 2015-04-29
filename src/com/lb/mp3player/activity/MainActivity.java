@@ -10,14 +10,21 @@ import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import com.lb.mp3player.Contants;
 import com.lb.mp3player.R;
 import com.lb.mp3player.model.Mp3Info;
+import com.lb.mp3player.service.DownloadService;
 import com.lb.mp3player.util.HttpDownloader;
 import com.lb.mp3player.xml.Mp3XmlHandler;
 
@@ -40,7 +47,16 @@ public class MainActivity extends Activity {
 
 	private void initView() {
 		mp3ListView = (ListView)findViewById(R.id.lv_mp3list);
-		
+		mp3ListView.setOnItemClickListener( new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View arg1, int position,
+					long arg3) {
+				Intent intent = new Intent(MainActivity.this,DownloadService.class);
+				intent.putExtra("mp3Info", mp3InfoList.get(position));
+				startService(intent);
+			}
+		});
 	}
 
 	private String downloadXML(String urlStr) {

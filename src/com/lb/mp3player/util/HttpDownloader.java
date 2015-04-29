@@ -8,8 +8,13 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import android.util.Log;
+
 public class HttpDownloader {
 
+	public final static int DOWNLOAD_OK = 0;
+	public final static int DOWNLOAD_ERROR = -1;
+	public final static int DOWNLOAD_EXIST = 1;
 	/**
 	 * 从网络读取文件返回String
 	 * 
@@ -39,37 +44,45 @@ public class HttpDownloader {
 		}
 		return sb.toString();
 	}
-
+/**
+ * 下载任意文件
+ * @param urlStr
+ * @param path
+ * @param fileName
+ * @return
+ */
 	public static int downFile(String urlStr, String path, String fileName) {
 		InputStream inputStream = null;
 		try {
 			FileUtils fileUtils = FileUtils.getInstance();
 			if (fileUtils.isFileExist(path + fileName)) {
-				return 1;
+				return DOWNLOAD_EXIST;
 			} else {
 				inputStream = getInputStreamFromUrl(urlStr);
 				File resultFile = fileUtils.write2SDFromInput(path, fileName,
 						inputStream);
 				if (resultFile == null) {
-					return -1;
+					return DOWNLOAD_ERROR;
 				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
-			return -1;
+			return DOWNLOAD_ERROR;
 
 		} finally {
 			try {
-				inputStream.close();
+				if(inputStream != null){
+					inputStream.close();
+				}
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
-		return 0;
+		return DOWNLOAD_OK;
 	}
 
-	private static InputStream getInputStreamFromUrl(String urlStr) {
+	public static InputStream getInputStreamFromUrl(String urlStr) {
+		Log.d("MT", urlStr);
 		try {
 			URL url = new URL(urlStr);
 			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -79,6 +92,5 @@ public class HttpDownloader {
 
 			return null;
 		}
-
 	}
 }
