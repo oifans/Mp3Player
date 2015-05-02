@@ -1,97 +1,55 @@
 package com.lb.mp3player.activity;
 
-import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.SAXParserFactory;
-
-import org.xml.sax.InputSource;
-import org.xml.sax.XMLReader;
-
 import android.app.Activity;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.content.Intent;
-import android.os.AsyncTask;
+import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 
-import com.lb.mp3player.Contants;
 import com.lb.mp3player.R;
-import com.lb.mp3player.model.Mp3Info;
-import com.lb.mp3player.service.DownloadService;
-import com.lb.mp3player.util.HttpDownloader;
-import com.lb.mp3player.xml.Mp3XmlHandler;
+import com.lb.mp3player.fragment.OnlineMp3Fragment;
+import com.lb.mp3player.fragment.SdCardMp3ListFragment;
 
-public class MainActivity extends Activity {
-
-	List<Mp3Info> mp3InfoList;
-	ListView mp3ListView;
-
+public class MainActivity extends Activity implements OnClickListener{
+	
+	private OnlineMp3Fragment onlineFragment ;
+	private SdCardMp3ListFragment sdCardFragment;
+	private Button online,sdcard;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		downloadXML(Contants.MP3XMLURL);
 		initView();
 		initEvent();
 	}
 
-	private void initEvent() {
-	}
-
 	private void initView() {
-		mp3ListView = (ListView)findViewById(R.id.lv_mp3list);
-		mp3ListView.setOnItemClickListener( new OnItemClickListener() {
-
-			@Override
-			public void onItemClick(AdapterView<?> parent, View arg1, int position,
-					long arg3) {
-				Intent intent = new Intent(MainActivity.this,DownloadService.class);
-				intent.putExtra("mp3Info", mp3InfoList.get(position));
-				startService(intent);
-			}
-		});
+		onlineFragment = new OnlineMp3Fragment();
+		sdCardFragment = new SdCardMp3ListFragment();		
+		online = (Button)findViewById(R.id.bt_onlineMp3List);
+		sdcard = (Button)findViewById(R.id.bt_sdcardMp3List);
 	}
 
-	private String downloadXML(String urlStr) {
-		new AsyncTask<String, Void, String>() {
-
-			@Override
-			protected String doInBackground(String... str) {
-				return HttpDownloader.download(str[0]);
-			}
-
-			@Override
-			protected void onPostExecute(String result) {
-				super.onPostExecute(result);
-				mp3InfoList = new ArrayList<Mp3Info>();
-				parseXMLWithSAX(result);
-			}
-		}.execute(urlStr);
-		return urlStr;
+	private void initEvent() {
+		online.setOnClickListener(this);
+		sdcard.setOnClickListener(this);
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		ft.replace(R.id.ll_content, sdCardFragment);
+		ft.commit();
 	}
-	
-	private void parseXMLWithSAX(String xmlData){
-		try{
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		XMLReader xmlReader = factory.newSAXParser().getXMLReader();
-		Mp3XmlHandler handler = new Mp3XmlHandler(mp3InfoList);
-		xmlReader.setContentHandler(handler);
-		xmlReader.parse(new InputSource(new StringReader(xmlData)));
-		}catch(Exception e){
-			e.printStackTrace();
+
+	@Override
+	public void onClick(View view) {
+		FragmentTransaction ft = getFragmentManager().beginTransaction();
+		switch (view.getId()) {
+		case R.id.bt_onlineMp3List:
+			ft.replace(R.id.ll_content, onlineFragment);
+			break;
+		case R.id.bt_sdcardMp3List:
+			ft.replace(R.id.ll_content, sdCardFragment);
+			break;
 		}
-		List<String> mp3Name = new ArrayList<String>();
-		for(Mp3Info mp3 : mp3InfoList){
-			mp3Name.add(mp3.getMp3Name());
-		}
-		mp3ListView.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1,mp3Name));
-		
+		ft.commit();
 	}
 }

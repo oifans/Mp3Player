@@ -6,24 +6,34 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.lb.mp3player.Constants;
+import com.lb.mp3player.model.Mp3Info;
 
 import android.os.Environment;
+import android.util.Log;
 
 public class FileUtils {
 
-	private static String SDPATH;
+	private static String SDPATH = Environment.getExternalStorageDirectory()
+			.getAbsolutePath() + File.separator;;
 	private static FileUtils fileUtils;
 
-	private FileUtils(){
-		
+	private FileUtils() {
+
 	}
+
 	public static FileUtils getInstance() {
-		SDPATH = Environment.getExternalStorageDirectory().getAbsolutePath()
-				+ "/";
-		if(fileUtils == null){
+		if (fileUtils == null) {
 			fileUtils = new FileUtils();
 		}
 		return fileUtils;
+	}
+
+	public static String fileNameWithSDPath(String fileName) {
+		return SDPATH + Constants.MP3SDPATH + fileName;
 	}
 
 	public File creatFileInSDCard(String fileName) throws IOException {
@@ -31,7 +41,6 @@ public class FileUtils {
 		file.createNewFile();
 		return file;
 	}
-
 
 	public File createSDDir(String dirName) {
 		File dir = new File(SDPATH + dirName);
@@ -58,8 +67,8 @@ public class FileUtils {
 			output = new FileOutputStream(file);
 			byte buffer[] = new byte[4 * 1024];
 			int temp;
-			while ((temp =input.read(buffer)) != -1) {
-				output.write(buffer,0,temp);
+			while ((temp = input.read(buffer)) != -1) {
+				output.write(buffer, 0, temp);
 			}
 			output.flush();
 		} catch (Exception e) {
@@ -72,5 +81,21 @@ public class FileUtils {
 			}
 		}
 		return file;
+	}
+
+	public List<Mp3Info> getMp3InfosFromPath(String path) {
+		File file = new File(SDPATH + path);
+		File[] mp3Files = file.listFiles();
+		List<Mp3Info> mp3Infos = new ArrayList<Mp3Info>();
+		for (File f : mp3Files) {
+			if (f.getName().endsWith(".mp3")) {
+				Log.d("MT", f.getName());
+				Mp3Info mp3Info = new Mp3Info();
+				mp3Info.setMp3Name(f.getName());
+				mp3Info.setMp3Size(f.length() + "");
+				mp3Infos.add(mp3Info);
+			}
+		}
+		return mp3Infos;
 	}
 }

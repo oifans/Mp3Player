@@ -7,4 +7,6 @@
 	<string name="download_ok">下载成功!</string>
 	<string name="download_error">下载出错!</string>
 	<string name="download_exist">文件存在!</string>
+	<string name="onlineMp3">在线音乐</string>
+	<string name="sdcardMp3">本地音乐</string>
 </resources>

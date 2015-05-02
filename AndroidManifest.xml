@@ -24,7 +24,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".activity.Mp3PlayActivity"></activity>
         <service android:name=".service.DownloadService"></service>
+        <service android:name=".service.MusicPlayService"></service>
     </application>
 
 </manifest>

@@ -9,7 +9,7 @@ import android.content.res.Resources;
 import android.os.IBinder;
 import android.util.Log;
 
-import com.lb.mp3player.Contants;
+import com.lb.mp3player.Constants;
 import com.lb.mp3player.R;
 import com.lb.mp3player.model.Mp3Info;
 import com.lb.mp3player.util.FileUtils;
@@ -56,7 +56,7 @@ public class DownloadService extends Service {
 		@Override
 		public void run() {
 			int stateCode = HttpDownloader.downFile(
-					Contants.MP3URL + mp3Info.getMp3Name(), "mymp3/",
+					Constants.MP3URL + mp3Info.getMp3Name(), "mymp3/",
 					mp3Info.getMp3Name());
 			Log.d("MT", stateCode + "");
 			String resultMessage = null;

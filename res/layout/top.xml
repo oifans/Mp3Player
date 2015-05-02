@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#ffccee77"
+    android:orientation="horizontal" >
+  	<Button 
+  	    android:id="@+id/bt_onlineMp3List"
+  	    android:layout_weight="1"
+  	    android:layout_width="0dp"
+  	    android:layout_height="wrap_content"
+  	    android:text="@string/onlineMp3"/>  
+  	    
+  	<Button 
+  	    android:id="@+id/bt_sdcardMp3List"
+  	    android:layout_weight="1"
+  	    android:layout_width="0dp"
+  	    android:layout_height="wrap_content"
+  	    android:text="@string/sdcardMp3"/>  
+</LinearLayout>
